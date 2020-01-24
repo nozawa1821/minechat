@@ -1,0 +1,13 @@
+require 'yaml'
+
+class Config
+  # プログラムの環境設定
+  ENV['PROGRAM_ENV'] ||= 'development'
+
+  # プログラムのバージョン
+  PROGRAM_VERSION = '0.0.1'
+
+  # discordの設定
+  TOKEN = '' # 適宜入力
+  CLIENT_ID = '' # 適宜入力
+end

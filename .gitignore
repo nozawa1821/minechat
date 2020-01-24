@@ -1,0 +1,13 @@
+# Ignore bundler config.
+/.bundle
+
+# ログファイル
+/log/*
+!/log/.keep
+
+# 連携ファイル、生成ファイル
+/files/*
+!/files/.keep
+
+# 設定ファイル
+/config/config.rb
