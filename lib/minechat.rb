@@ -1,19 +1,10 @@
 class MineChat
-  CONFIG = {
-    token: Config::TOKEN,
-    client_id: Config::CLIENT_ID,
-    prefix:'/'
-  }
-
   def initialize
-    @bot = Discordrb::Commands::CommandBot.new (CONFIG)
+    @discord_bot = DiscordBot.new
   end
 
   def start
-    @bot.command :hello do |event|
-      event.send_message("hallo,world.#{event.user.name}")
-    end
-
-    @bot.run
+    # discord botを起動する
+    @discord_bot.run
   end
 end

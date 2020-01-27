@@ -3,6 +3,8 @@
 # 既存ライブラリの読み込み
 require 'fileutils'
 require 'yaml'
+require 'socket'
+require 'thread'
 require 'discordrb'
 
 # コンフィグファイルの読み込み
