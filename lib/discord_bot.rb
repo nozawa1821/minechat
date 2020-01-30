@@ -25,7 +25,10 @@ class DiscordBot
       # p message_obj.timestamp # 発言時間
 
       # 発言内容をminecraft serverに送信する
-      @mc_driver.send(message_obj.content)
+      result = @mc_driver.send(message_obj.content)
+
+      # 送信が成功しなかった場合、discordのチャットに送信失敗を出力する
+      event.respond("送信失敗：#{message_obj.content}") unless result
     end
 
     @bot.run
