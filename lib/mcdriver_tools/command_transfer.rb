@@ -1,13 +1,11 @@
 class CommandTransfer
-  attr_accessor :send_interval
 
   def initialize(host, port)
-    @send_interval = 0.005
     @mutex = Mutex.new
     @cond = ConditionVariable.new
     @socket = TCPSocket.open(host, port)
     @socket.setsockopt(Socket::IPPROTO_TCP, Socket::TCP_NODELAY, 1)
-    Thread.new{read}
+    @thread = Thread.new {read}
 
     @waiting = {}
   end
@@ -20,8 +18,13 @@ class CommandTransfer
     # minecraftサーバー宛に送信する
     request_packets(packet)
 
+    # レスポンス受け取り処理のプロセスをキル
+    Thread.kill(@thread)
+
     # サーバーレスポンスを取得する
     packet.response
+  rescue => e
+    raise e
   end
 
   # minecraft rconの認証を行う
@@ -37,26 +40,25 @@ class CommandTransfer
 
   private
   # minecraftサーバー宛に送信処理を行う
-  def request_packets(packet, timeout = nil)
+  def request_packets(packet, timeout = 10)
     @mutex.synchronize do
-
       @waiting[packet.id] = packet
       @socket.write(packet.to_byte)
       @socket.flush
-      sleep send_interval
 
       @cond.wait(@mutex, timeout)
     end
   end
 
+  # レスポンス受け取り
   def read
     loop do
       size, id, type = @socket.read(12).unpack('VVV')
       data = @socket.read(size - 8)[0...-2]
       notify(id, data)
     end
-  rescue Exception => e
-    p e
+  rescue => e
+    raise e
   end
 
   def notify(id, data)

@@ -6,6 +6,7 @@ require 'yaml'
 require 'socket'
 require 'thread'
 require 'discordrb'
+require 'miyabi'
 
 # コンフィグファイルの読み込み
 require './config/config'

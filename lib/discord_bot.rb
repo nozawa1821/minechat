@@ -8,7 +8,6 @@ class DiscordBot
   }
   def initialize
     @bot = Discordrb::Commands::CommandBot.new (CONFIG)
-    @mc_driver = MCDriver.new
   end
 
   def run
@@ -17,18 +16,17 @@ class DiscordBot
     end
 
     @bot.message do |event|
-      bot_obj = event.bot
-      message_obj = event.message
-      # p bot_obj.users # チャット参加者
-      # p message_obj.content # 発言内容
-      # p message_obj.author # 発言者
-      # p message_obj.timestamp # 発言時間
+      user_name = event.user.name # 発言者
+      message = event.message.content # 発言内容
+      # event.message.timestamp # 発言時間
 
       # 発言内容をminecraft serverに送信する
-      result = @mc_driver.send(message_obj.content)
+      mc_driver = MCDriver.new
+      result = mc_driver.send(user_name, message)
 
       # 送信が成功しなかった場合、discordのチャットに送信失敗を出力する
-      event.respond("送信失敗：#{message_obj.content}") unless result
+      error_msg = "以下の内容はminecraftに送信していません。\n> #{message}\n"
+      event.respond(error_msg) unless result
     end
 
     @bot.run

@@ -3,6 +3,7 @@ class MCDriver
   PORT = Config::MINECRAFT[:rcon_port]
   PASSWORD = Config::MINECRAFT[:rcon_password]
   COMMAND_LIST = YAML.load_file('config/command_list.yml')
+  attr_reader :user, :message
 
   def initialize
     @authorized = false
@@ -10,45 +11,94 @@ class MCDriver
   end
 
   # 内容をminecraftのチャットに送信する処理
-  def send(message)
-    # 認証処理
+  def send(user, message)
+    @user = user
+    @message = message
+
+    # 認証
     authorize
 
-    # 内容が送信できない場合、送信処理を実行しない
-    return false unless message_check(message)
-    # 内容をminecraftのコマンドに変換する
-    message = create_chat_messge(message)
+    # ユーザー名を変換する
+    return false unless convert_user
+
+    # 内容を変換する
+    return false unless convert_message
 
     # minecraft serverにコマンドを送信する
-    response = @transfer.send(message)
+    response = @transfer.send(@message)
+
+    # 返却値がnilならば、falseを返す
+    return false if response.nil?
 
     # レスポンス内容をコンソール上に表示する
     p response
 
     return true
+  rescue => e
+    p e
   end
 
   private
+  # 内容をコマンド形式に変換する処理
+  # return [boolean]
+  def convert_message
+
+    # 日本語文字をローマ字に変換する
+    @message = convert_en_to_ja(@message)
+
+    # 2バイト以上の文字を削除する
+    @message = @message.chars.map{ |moji| moji if moji.bytesize == 1 }.join
+
+    # コマンドを切り抜き
+    match_data = @message.match(/^\/(\w+)(.*)$/)
+
+    # 内容が送信できない場合、送信処理を実行しない
+    return false unless message_check(match_data)
+
+    # コマンド形式であれば値をそのまま返却する
+    return true　if !!match_data
+
+    # 内容がコマンド形式で記述されていない場合はsayコマンドを付与変換する
+    @message = "/say <#{@user}> #{@message}"
+
+    return true
+  end
+
+  # ユーザー名をローマ字に変換する処理
+  # return [boolean]
+  def convert_user
+    # 日本語文字をローマ字に変換する
+    @user = convert_en_to_ja(@user)
+
+    # 2バイト以上の文字を削除する
+    @user = @user.chars.map{ |moji| moji if moji.bytesize == 1 }.join
+
+    return true
+  end
 
   # サーバに送信できる内容か検閲する
-  def message_check(message)
-    # コマンドを切り抜き
-    match_data = message.match(/^\/(\w+)/)
-
+  # return [boolean]
+  def message_check(match_data)
     # 内容がコマンド形式になっていなければtrueを返す
     return true unless !!match_data
 
     # 実行可能コマンドリストにコマンドがあればtrueを返す
+    p match_data[1]
     COMMAND_LIST.any?(match_data[1])
   end
 
-  # 内容をコマンド形式に変換する処理
-  def create_chat_messge(message)
-    # コマンド形式であればそのまま内容を返却する
-    return message if !!message.match(/^\//)
+  # 日本語文字をローマ字に変換する処理
+  # @param [String] 変換対象の文字列
+  # @return [String] ローマ字に変換した文字列
+  def convert_en_to_ja(str_data)
+    # 全ての文字が1バイト文字なら変換しない
+    return str_data if str_data.chars.map{ |moji| moji.bytesize == 1 }.all?
 
-    # 内容がコマンド形式で記述されていない場合はsayコマンドを実行する
-    "/say #{message}"
+    # 漢字が含まれている場合ひらがなに変換する
+    str_data = str_data.to_kanhira if str_data.chars.map(&:is_kanji?).any?
+
+    # かな/カナをローマ字に変換する
+    str_data.to_roman
   end
 
   # minecraft rconへ認証する処理

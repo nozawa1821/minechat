@@ -13,6 +13,6 @@ class Packet
   end
 
   def to_byte
-    [size,@id,@type,@data, ''].pack('VVVa*a2')
+    [size, @id, @type, @data, ''].pack('VVVa*a2')
   end
 end
