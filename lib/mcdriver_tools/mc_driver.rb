@@ -56,7 +56,7 @@ class MCDriver
     return false unless message_check(match_data)
 
     # コマンド形式であれば値をそのまま返却する
-    return true　if !!match_data
+    return true if !!match_data
 
     # 内容がコマンド形式で記述されていない場合はsayコマンドを付与変換する
     @message = "/say <#{@user}> #{@message}"
