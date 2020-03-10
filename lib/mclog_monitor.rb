@@ -32,13 +32,18 @@ class MCLogMonitor
   def convert_message(log)
     return nil if log == nil
 
-    rcon_message = '\[\d+:\d+:\d+\] \[.+\]: \[Rcon\] (.+)'
-    rcon_info = '^\[\d+:\d+:\d+\] \[.+\]: Rcon .+$'
-    message_legexp = '^\[\d+:\d+:\d+\] \[(.+)\]: <(.+)> (.+)\[m$'
 
     # rconに関するログを排除
+    rcon_message = '\[\d+:\d+:\d+\] \[.+\]: \[Rcon\] (.+)'
+    rcon_info = '^\[\d+:\d+:\d+\] \[.+\]: Rcon .+$'
     return nil if log.match(rcon_message) || log.match(rcon_info)
 
+    # chatメッセージの場合は整形する
+    message_legexp = '^\[\d+:\d+:\d+\] \[(.+)\]: <(.+)> (.+)$'
+    message = log.match(message_legexp)
+    return "<#{message[2]}> #{message[3]}" if message
+
+    # それ以外はそのまま出力
     log
   end
 end

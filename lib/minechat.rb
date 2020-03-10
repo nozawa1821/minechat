@@ -6,6 +6,7 @@ class MineChat
     client_id: CLIENT_ID,
     prefix:'/'
   }
+
   def initialize
     bot = Discordrb::Commands::CommandBot.new (CONFIG)
     @discord_bot = DiscordBot.new(bot)
