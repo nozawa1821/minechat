@@ -31,7 +31,7 @@ class MCDriver
     return false if response.nil?
 
     # レスポンス内容をコンソール上に表示する
-    p response
+    p response if response
 
     return true
   rescue => e
