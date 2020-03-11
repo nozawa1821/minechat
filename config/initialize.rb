@@ -7,6 +7,11 @@ require 'socket'
 require 'thread'
 require 'discordrb'
 require 'miyabi'
+require "i18n"
+
+
+# 多言語化ライブラリの読み込み
+I18n.load_path = Dir.glob('./locale/*.yml').map{|path| [path]}
 
 # コンフィグファイルの読み込み
 require './config/config'

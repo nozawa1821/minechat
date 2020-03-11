@@ -1,21 +1,14 @@
 class DiscordBot
-  TOKEN = Config::DISCORD_BOT[:token]
-  CLIENT_ID = Config::DISCORD_BOT[:client_id]
-  CONFIG = {
-    token: TOKEN,
-    client_id: CLIENT_ID,
-    prefix:'/'
-  }
-  def initialize
-    @bot = Discordrb::Commands::CommandBot.new (CONFIG)
+  def initialize(bot)
+    @discord_bot = bot
   end
 
   def run
-    @bot.command :hello do |event|
+    @discord_bot.command :hello do |event|
       event.send_message("hallo,world.#{event.user.name}")
     end
 
-    @bot.message do |event|
+    @discord_bot.message do |event|
       user_name = event.user.name # 発言者
       message = event.message.content # 発言内容
       # event.message.timestamp # 発言時間
@@ -29,6 +22,6 @@ class DiscordBot
       event.respond(error_msg) unless result
     end
 
-    @bot.run
+    @discord_bot.run
   end
 end

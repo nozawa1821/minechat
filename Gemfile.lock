@@ -1,6 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    concurrent-ruby (1.1.6)
     discordrb (3.3.0)
       discordrb-webhooks (~> 3.3.0)
       ffi (>= 1.9.24)
@@ -17,6 +18,8 @@ GEM
     http-accept (1.7.0)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
+    i18n (1.8.2)
+      concurrent-ruby (~> 1.0)
     mechanize (2.7.5)
       domain_name (~> 0.5, >= 0.5.1)
       http-cookie (~> 1.0)
@@ -61,6 +64,7 @@ PLATFORMS
 
 DEPENDENCIES
   discordrb
+  i18n
   miyabi
 
 BUNDLED WITH
