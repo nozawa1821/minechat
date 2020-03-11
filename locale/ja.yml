@@ -1,5 +1,8 @@
 ja:
   hoge: "ほげ"
+  server_info:
+    login: "%{user} がログインしました"
+    logout: "%{user} がログアウトしました"
   death:
     shot_by_aroow: "%{user} が矢で射抜かれて逝ったみたい。"
     shot_by_player: "%{user} が %{by} に射抜かれて逝ったみたい。"

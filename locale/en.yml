@@ -1,5 +1,8 @@
 en:
   hoge: "hoge"
+  server_info:
+    login: "%{user} joined the game"
+    logout: "%{user} left the game"
   death:
     shot_by_aroow: "%{user} was shot by arrow"
     shot_by_player: "%{user} was shot by %{by}"
