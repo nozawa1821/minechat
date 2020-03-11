@@ -34,16 +34,23 @@ class MCLogMonitor
 
 
     # rconに関するログを排除
-    rcon_message = '\[\d+:\d+:\d+\] \[.+\]: \[Rcon\] (.+)'
-    rcon_info = '^\[\d+:\d+:\d+\] \[.+\]: Rcon .+$'
-    return nil if log.match(rcon_message) || log.match(rcon_info)
+    rcon_msg_legexp = '\[\d+:\d+:\d+\] \[.+\]: \[Rcon\] (.+)'
+    rcon_info_legexp = '^\[\d+:\d+:\d+\] \[.+\]: Rcon .+$'
+    return nil if log.match(rcon_msg_legexp) || log.match(rcon_info_legexp)
 
     # chatメッセージの場合は整形する
-    message_legexp = '^\[\d+:\d+:\d+\] \[(.+)\]: <(.+)> (.+)$'
-    message = log.match(message_legexp)
+    chat_legexp = '^\[\d+:\d+:\d+\] \[(.+)\]: <(.+)> (.+)$'
+    message = log.match(chat_legexp)
     return "<#{message[2]}> #{message[3]}" if message
 
-    # それ以外はそのまま出力
-    log
+    # それ以外はテンプレートに一致すれば出力する
+    log_legexp = '^\[\d+:\d+:\d+\] \[.+\]: (.+)$'
+    log_msg = log.match(log_legexp)
+    convert_log(log_msg[1]) if log_msg
+  end
+
+  def convert_log(log_message)
+    mclog_converter = LogConverter.new(log_message)
+    mclog_converter.start
   end
 end
