@@ -9,12 +9,12 @@ require 'discordrb'
 require 'miyabi'
 require "i18n"
 
-# コンフィグファイルの読み込み
-require './config/config'
 
 # 多言語化ライブラリの読み込み
 I18n.load_path = Dir.glob('./locale/*.yml').map{|path| [path]}
-I18n.default_locale = :ja
+
+# コンフィグファイルの読み込み
+require './config/config'
 
 # 自作ライブラリに関する設定
 # Dir['./config/initializers/*.rb'].sort.each { |f| require f }

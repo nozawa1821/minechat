@@ -1,11 +1,12 @@
-require 'yaml'
-
 class Config
   # プログラムの環境設定
   ENV['PROGRAM_ENV'] ||= 'development'
 
   # プログラムのバージョン
   PROGRAM_VERSION = '0.0.1'
+
+  # setting default language (:en or :ja)
+  I18n.default_locale = :ja
 
   # discord Botの設定
   DISCORD_BOT = {
