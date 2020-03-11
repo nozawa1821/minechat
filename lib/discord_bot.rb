@@ -4,10 +4,12 @@ class DiscordBot
   end
 
   def run
-    @discord_bot.command :hello do |event|
-      event.send_message("hallo,world.#{event.user.name}")
+    # discordbotのコマンドを追加
+    @discord_bot.command :hello_world do |event|
+      event.send_message("HELLO WORLD. #{event.user.name}")
     end
 
+    # 取得した内容をトレースし、コマンドの実行もしくはminecraftに内容を送信する
     @discord_bot.message do |event|
       user_name = event.user.name # 発言者
       message = event.message.content # 発言内容
@@ -23,5 +25,7 @@ class DiscordBot
     end
 
     @discord_bot.run
+  rescue => e
+    puts "discordbot側でエラーが発生しました：#{e}"
   end
 end

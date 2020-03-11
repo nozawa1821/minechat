@@ -59,7 +59,12 @@ class LogRegexpList
 
   SERVER_INFO_REGEXP = {
     role: "server_info",
-    login: /^(?<user>.*) joined the game$/,
+    login: /^(?<user>.*)\[\/(?<ip_address>.*)\] logged in with entity id \d+ at \(\[(?<server>.*)\].*\)$/,
     logout: /^(?<user>.*) left the game$/,
+    add_whitelist: /^\[(?<by>.*): Added (?<user>.*) to the whitelist\]$/,
+    remove_whitelist: /^\[(?<by>.*): Removed (?<user>.*) from the whitelist\]$/,
+    server_stopped: /^Stopping server$/,
+    server_started: /^Starting minecraft server version (?<info>.*)$/,
+    server_done: /^Done \(.*s\)! For help, type .*$/,
   }
 end

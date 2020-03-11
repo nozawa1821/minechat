@@ -12,7 +12,7 @@ class LogConverter
 
     @log_regexps.each do |regexps|
       # 文字列が正規表現にマッチするかを確認
-      match_result = regexps.values.find_index {|legexp| @log.match(legexp) }
+      match_result = regexps.values.find_index {|regexp| @log.match(regexp) }
 
       # マッチしない場合はnilを返す
       next if match_result.nil?
@@ -26,15 +26,12 @@ class LogConverter
     result
   end
 
-  def log_matcher()
-  end
-
   def convert_log_message(role, log_keyname, matched_log)
     # ハッシュのキーをシンボル化
     matched_log = symbolize_keys(matched_log)
 
     # 設定された言語に変換
-    I18n.t("#{role}.#{log_keyname}", user: matched_log[:user], by: matched_log[:by], tool: matched_log[:tool])
+    I18n.t("#{role}.#{log_keyname}", user: matched_log[:user], by: matched_log[:by], tool: matched_log[:tool], info: matched_log[:info])
   end
 
   # ハッシュのキーをシンボル化

@@ -3,6 +3,11 @@ en:
   server_info:
     login: "%{user} joined the game"
     logout: "%{user} left the game"
+    add_whitelist: "Added %{user} to the whitelist by %{by}"
+    remove_whitelist: "Removed %{user} from the whitelist by %{by}"
+    server_stopped: "Stopping server"
+    server_started: "Starting minecraft server (minecraft version: %{info})"
+    server_done: "Now you can play games!"
   death:
     shot_by_aroow: "%{user} was shot by arrow"
     shot_by_player: "%{user} was shot by %{by}"

@@ -20,6 +20,7 @@ class Config
     host: 'localhost',
     rcon_port: '25575',
     rcon_password: '',
-    monitored_log: '/logs/latest.log'
+    monitored_log: '/logs/latest.log',
+    command_prefix: '', # 環境によってコマンド実行にスラッシュが必要な場合がある（必要な場合は、'/'を設定）
   }
 end

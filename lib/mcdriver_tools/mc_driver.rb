@@ -2,6 +2,7 @@ class MCDriver
   HOST = Config::MINECRAFT[:host]
   PORT = Config::MINECRAFT[:rcon_port]
   PASSWORD = Config::MINECRAFT[:rcon_password]
+  PREFIX = Config::MINECRAFT[:command_prefix]
   COMMAND_LIST = YAML.load_file('config/command_list.yml')
   attr_reader :user, :message
 
@@ -16,7 +17,7 @@ class MCDriver
     @message = message
 
     # 認証
-    authorize
+    return false unless authorize
 
     # ユーザー名を変換する
     return false unless convert_user
@@ -25,17 +26,17 @@ class MCDriver
     return false unless convert_message
 
     # minecraft serverにコマンドを送信する
-    response = @transfer.send(@message)
+    response = @transfer.send("#{PREFIX}#{@message}")
 
     # 返却値がnilならば、falseを返す
     return false if response.nil?
 
-    # レスポンス内容をコンソール上に表示する
-    p response if response
+    # レスポンス内容をコンソール上に表示する（TODO: いつかログ出力する）
+    puts "minecaftサーバーからのレスポンス：#{response}" if response
 
     return true
   rescue => e
-    p e
+    raise e
   end
 
   private
@@ -50,16 +51,19 @@ class MCDriver
     @message = @message.chars.map{ |moji| moji if moji.bytesize == 1 }.join
 
     # コマンドを切り抜き
-    match_data = @message.match(/^\/(\w+)(.*)$/)
+    match_data = @message.match(/^\/(\w+) (.*)$/)
 
     # 内容が送信できない場合、送信処理を実行しない
     return false unless message_check(match_data)
 
     # コマンド形式であれば値をそのまま返却する
-    return true if !!match_data
+    if !!match_data
+      @message = "#{match_data[1]} #{match_data[2]}"
+      return true
+    end
 
     # 内容がコマンド形式で記述されていない場合はsayコマンドを付与変換する
-    @message = "/say <#{@user}> #{@message}"
+    @message = "say <#{@user}> #{@message}"
 
     return true
   end
