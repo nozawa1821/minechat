@@ -1,5 +1,6 @@
 class MCLogMonitor
   LOG_FILE_PATH = Config::MINECRAFT[:monitored_log]
+  CHANNEL_ID = Config::DISCORD_BOT[:channel_id]
 
   def initialize(discord_bot)
     @logfile = File.open(LOG_FILE_PATH, 'r')
@@ -25,7 +26,7 @@ class MCLogMonitor
   def send_log(message)
     return if message == nil
 
-    @discord_bot.send_message(668682153583837185, message)
+    @discord_bot.send_message(CHANNEL_ID, message)
     puts "discordにログを送信しました：#{message}"
   end
 

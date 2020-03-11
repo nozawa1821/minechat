@@ -10,14 +10,15 @@ class Config
   # discord Botの設定
   DISCORD_BOT = {
     token: '', # 適宜入力
-    client_id: '' # 適宜入力
+    client_id: '', # 適宜入力
+    channel_id: '' # 適宜入力
   }
 
   # minecraft の設定
   MINECRAFT = {
-    host: '25575',
-    rcon_port: 'localhost',
-    rcon_password: '', # 適宜入力
-    monitored_log: '/var/minecraft/logs/latest.log'
+    host: 'localhost',
+    rcon_port: '25575',
+    rcon_password: '',
+    monitored_log: '/logs/latest.log'
   }
 end
