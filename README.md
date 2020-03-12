@@ -215,7 +215,7 @@ $ nohup ruby main.rb &
 ・minechatが稼働しているかを確認する
 以下の出力が出ればOK
 ```
-ps aux | grep rub
+ps aux | grep ruby
 root  xxxxx  x.x  x.x xxxxxx xxx xxx/x R+ xx:xx x:xx minechat.rb
 ```
 
