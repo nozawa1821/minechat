@@ -3,22 +3,33 @@ class MCLogMonitor
   CHANNEL_ID = Config::DISCORD_BOT[:channel_id]
 
   def initialize(discord_bot)
-    @logfile = File.open(LOG_FILE_PATH, 'r')
     @discord_bot = discord_bot
   end
 
   # ログの最終行を監視する
   def monitoring
+    file_size = File.size(LOG_FILE_PATH)
     line = nil
-    @logfile.seek(0, IO::SEEK_END)
 
     # ログに更新があった場合に処理が動く
     loop do
-      new_line = @logfile.gets
+      current_file_size = File.size(LOG_FILE_PATH)
 
-      if (line != new_line)
-        send_log(convert_message(new_line))
-        line = new_line
+      # ログファイルに更新があった場合、処理を開始する
+      if file_size != current_file_size
+        logfile = File.open(LOG_FILE_PATH, 'r')
+        logfile.seek(file_size)
+
+        # ログの取得
+        line = logfile.gets
+
+        # 一行ごとにログを取得
+        while(line != nil)
+          send_log(convert_message(line))
+          line = logfile.gets
+        end
+
+        file_size = current_file_size
       end
 
       sleep 0.5
