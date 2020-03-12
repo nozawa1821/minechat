@@ -1,9 +1,6 @@
 class Config
-  # プログラムの環境設定
-  ENV['PROGRAM_ENV'] ||= 'development'
-
   # プログラムのバージョン
-  PROGRAM_VERSION = '0.0.1'
+  PROGRAM_VERSION = '1.0.0'
 
   # setting default language (:en or :ja)
   I18n.default_locale = :ja
@@ -20,7 +17,7 @@ class Config
     host: 'localhost',
     rcon_port: '25575',
     rcon_password: '',
-    monitored_log: '/logs/latest.log',
+    monitored_log: '/opt/minecraft/logs/latest.log',
     command_prefix: '', # 環境によってコマンド実行にスラッシュが必要な場合がある（必要な場合は、'/'を設定）
   }
 end
