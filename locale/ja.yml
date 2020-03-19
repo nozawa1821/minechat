@@ -63,3 +63,15 @@ ja:
     withered_away: "%{user} が干からびて逝った"
     pummeled_by_player: "%{user} が %{by} にぺしゃんこにされて逝った"
     died: "%{user} が逝った"
+  discord_bot:
+    command:
+      success: "コマンド：'/%{command_name}' を追加しました(権限レベル : %{permission_level})"
+      execution_error:
+        add_command: "optionを正しく入力してください\n/add_command <command_name> <permission_level>"
+      already_registed: "コマンド：'/%{command_name}' は既に登録済みです"
+      add_command:
+        desc: "discord上で実行できるminecraftのコマンドを追加します\n使用方法：/add_command <command_name> <permission_level>\n※権限レベルが0の場合は誰でも実行することができます。"
+      command_list:
+        desc: "discord上で実行できるminecraftのコマンドの一覧を表示します"
+      user_list:
+        desc: "minechatに登録されているユーザー一覧を表示します"
