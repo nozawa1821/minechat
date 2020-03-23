@@ -18,7 +18,9 @@ class MCLogMonitor
       # ログファイルに更新があった場合、処理を開始する
       if file_size != current_file_size
         logfile = File.open(LOG_FILE_PATH, 'r')
-        logfile.seek(file_size)
+
+        # 前回ログを読み込んだところからログの読み込みを開始
+        file_size < current_file_size ? logfile.seek(file_size) : logfile.seek(0)
 
         # ログの取得
         line = logfile.gets
