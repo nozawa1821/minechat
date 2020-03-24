@@ -66,7 +66,11 @@ class COMMANDS < Sequel::Model(:commands)
     target_command.update(permission_level: permission_level) if target_command.present?
   end
 
-  # TODO: コマンドの削除
+  # コマンドの削除
+  def self.remove(command_name)
+    target_command = self.find(command_name: command_name)
+    target_command.delete if target_command.present?
+  end
 
   # コマンドが既に登録済みかを確認
   # @return [bool] 登録済みの場合はtrueを返す

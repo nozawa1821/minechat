@@ -41,9 +41,9 @@ class DiscordBot
     # glhf :)
     @discord_bot.command(:hello_world, description: '動作確認用コマンド') { |event| event.send_message("HELLO WORLD. #{event.user.name}") }
     # ユーザーの一覧表示
-    @discord_bot.command(:user_list, description: I18n.t("discord_bot.command.user_list.desc")) { |event| exec_discord_command(event, :user_list) }
+    @discord_bot.command([:user_list, :u_list], description: I18n.t("discord_bot.command.user_list.desc")) { |event| exec_discord_command(event, :user_list) }
     # コマンドの一覧表示
-    @discord_bot.command(:command_list, description: I18n.t("discord_bot.command.command_list.desc")) { |event| exec_discord_command(event, :command_list) }
+    @discord_bot.command([:command_list, :c_list], description: I18n.t("discord_bot.command.command_list.desc")) { |event| exec_discord_command(event, :command_list) }
     # minecraftで実行できるコマンドを追加
     @discord_bot.command([:command_add, :c_add], description: I18n.t("discord_bot.command.command_add.desc"), permission_level: 3) do |event|
       exec_discord_command(event, :command_add)
@@ -52,9 +52,12 @@ class DiscordBot
     @discord_bot.command([:command_chmod, :c_chmod], description: I18n.t("discord_bot.command.command_chmod.desc"), permission_level: 3) do |event|
       exec_discord_command(event, :command_chmod)
     end
-    # TODO: コマンドの削除
+    # コマンドの削除
+    @discord_bot.command([:command_remove, :c_rm], description: I18n.t("discord_bot.command.command_remove.desc"), permission_level: 3) do |event|
+      exec_discord_command(event, :command_remove)
+    end
     # ユーザーの権限レベルを変更
-    @discord_bot.command(:user_chmod, description: I18n.t("discord_bot.command.user_chmod.desc"), permission_level: 3) do |event|
+    @discord_bot.command([:user_chmod, :u_chmod], description: I18n.t("discord_bot.command.user_chmod.desc"), permission_level: 3) do |event|
       exec_discord_command(event, :user_chmod)
     end
   end
@@ -84,6 +87,8 @@ class DiscordBot
       command_add(event, command)
     when :command_chmod
       command_chmod(command, event)
+    when :command_remove
+      command_remove(command, event)
     when :user_chmod
       user_chmod(command, event)
     end
@@ -139,6 +144,22 @@ class DiscordBot
       event.send_message(I18n.t("discord_bot.command.command_chmod.success", command_name: command.command_name, permission_level: command.permission_level))
     else
       event.send_message(I18n.t("discord_bot.command.command_chmod.error"))
+    end
+  end
+
+  # コマンドを削除する
+  def command_remove(command, event)
+    regexp = /^\/\w+ (?<command_name>.+)$/
+    match_data = command.match(regexp)
+
+    # コマンドの引数が正しい形式で渡されていなければ処理を終了する
+    return event.send_message(I18n.t("discord_bot.command.command_remove.execution_error")) if match_data.blank?
+
+    result = COMMANDS.remove(match_data[:command_name])
+    if result.present?
+      event.send_message(I18n.t("discord_bot.command.command_remove.success"))
+    else
+      event.send_message(I18n.t("discord_bot.command.command_remove.error"))
     end
   end
 

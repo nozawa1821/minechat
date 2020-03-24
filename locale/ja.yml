@@ -77,6 +77,11 @@ ja:
         success: "権限が更新されました\n> /%{command_name}\n> 権限レベル：%{permission_level}"
         execution_error: "optionを正しく入力してください\n/command_chmod <command_name> <permission_level>"
         error: "権限変更に失敗しました"
+      command_remove:
+        desc: "コマンドを削除します\n使用方法：/command_remove <command_name>"
+        success: "コマンドが削除されました"
+        execution_error: "optionを正しく入力してください\n/command_remove <command_name>"
+        error: "コマンドの削除に失敗しました"
       user_list:
         desc: "minechatに登録されているユーザー一覧を表示します"
       user_chmod:
