@@ -5,8 +5,11 @@ class DiscordBot
 
   def run
     # 権限を取得しdiscord_botに反映させる
-    DISCORD_USERS.list.each { |user| @discord_bot.set_user_permission(user[:id], user[:permission_level]) }
+    DISCORD_USERS.list.each do |user|
+      @discord_bot.set_user_permission(user[:id], user[:permission_level])
+    end
 
+    # 自作したdiscordコマンドの読み込み
     load_command
 
     # 取得した内容をパースし、コマンドの実行もしくはminecraftに内容を送信する
@@ -36,10 +39,28 @@ class DiscordBot
   end
 
   private
+  # コマンドがdiscordのコマンドであれば、trueを返す
+  def discord_command?(message)
+    discord_command = message.match(/^\/(?<command>\w+).*$/)
+    @discord_bot.commands.keys.any?(discord_command[:command].intern) if discord_command.present?
+  end
+
   # 作成したdiscord用実行コマンドの読み込み
   def load_command
     # glhf :)
-    @discord_bot.command(:hello_world, description: '動作確認用コマンド') { |event| event.send_message("HELLO WORLD. #{event.user.name}") }
+    @discord_bot.command(:minechat, description: 'minechat') do |event|
+      event.send_embed do |embed|
+        embed.title = I18n.t('discord_bot.command.minechat.title')
+        embed.url = I18n.t('discord_bot.command.minechat.url')
+        embed.description = I18n.t('discord_bot.command.minechat.desc')
+        embed.color = '0x37a1ee'
+        embed.author = Discordrb::Webhooks::EmbedAuthor.new(
+          name: I18n.t('discord_bot.command.minechat.author'),
+          url: I18n.t('discord_bot.command.minechat.twitter_url'),
+          icon_url: I18n.t('discord_bot.command.minechat.twitter_icon')
+        )
+      end
+    end
 
     # ユーザーの一覧表示
     @discord_bot.command([:user_list, :u_list], description: I18n.t("discord_bot.command.user_list.desc")) do |event|
@@ -70,12 +91,6 @@ class DiscordBot
     @discord_bot.command([:user_chmod, :u_chmod], description: I18n.t("discord_bot.command.user_chmod.desc"), permission_level: 3) do |event|
       exec_discord_command(event, :user_chmod)
     end
-  end
-
-  # コマンドがdiscordのコマンドであれば、trueを返す
-  def discord_command?(message)
-    discord_command = message.match(/^\/(?<command>\w+).*$/)
-    @discord_bot.commands.keys.any?(discord_command[:command].intern) if discord_command.present?
   end
 
   def exec_discord_command(event, discord_command)
@@ -112,7 +127,7 @@ class DiscordBot
         embed.add_field(
           name: command[:name],
           value: "権限レベル：#{command[:permission_level]}",
-          inline: false
+          inline: true
         )
       end
     end

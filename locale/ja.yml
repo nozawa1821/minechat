@@ -65,6 +65,13 @@ ja:
     died: "%{user} が逝った"
   discord_bot:
     command:
+      minechat:
+        title: 'minechat'
+        url: 'https://github.com/nozawa1821/minechat'
+        desc: "discordで実行できるコマンドについては'/help'を参照してね\nわからないことがあればTwitterでDMしてね"
+        author: 'noziming'
+        twitter_url: 'https://twitter.com/noziming'
+        twitter_icon: 'https://pbs.twimg.com/profile_images/1199865213853454336/kKiW7Fte.jpg'
       command_list:
         desc: "discord上で実行できるminecraftのコマンドの一覧を表示します"
       command_add:
