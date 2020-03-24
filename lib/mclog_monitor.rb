@@ -6,33 +6,35 @@ class MCLogMonitor
     @discord_bot = discord_bot
   end
 
-  # ログの最終行を監視する
+  # ログファイルを監視する
   def monitoring
     file_size = File.size(LOG_FILE_PATH)
-    line = nil
+    interval = 0.5
 
-    # ログに更新があった場合に処理が動く
     loop do
       current_file_size = File.size(LOG_FILE_PATH)
 
-      # ログファイルに更新があった場合、処理を開始する
+      # ログファイルに更新があった場合、差分取得処理を開始する
       if file_size != current_file_size
         logfile = File.open(LOG_FILE_PATH, 'r')
-        logfile.seek(file_size)
 
-        # ログの取得
+        # 前回ログを読み込んだところからログの読み込みを開始
+        file_size < current_file_size ? logfile.seek(file_size) : logfile.seek(0)
+
+        # ログを取得
         line = logfile.gets
 
         # 一行ごとにログを取得
-        while(line != nil)
+        while(!line.nil?)
           send_log(convert_message(line))
           line = logfile.gets
         end
 
+        # ファイルサイズの更新
         file_size = current_file_size
       end
 
-      sleep 0.5
+      sleep interval
     end
   end
 
