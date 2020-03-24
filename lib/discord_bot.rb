@@ -7,18 +7,7 @@ class DiscordBot
     # 権限を取得しdiscord_botに反映させる
     DISCORD_USERS.list.each { |user| @discord_bot.set_user_permission(user[:id], user[:permission_level]) }
 
-    # glhf :)
-    @discord_bot.command(:hello_world, description: '動作確認用コマンド') { |event| event.send_message("HELLO WORLD. #{event.user.name}") }
-    # ユーザーの一覧表示
-    @discord_bot.command(:user_list, description: I18n.t("discord_bot.command.user_list.desc")) { |event| exec_discord_command(event, :user_list) }
-    # コマンドの一覧表示
-    @discord_bot.command(:command_list, description: I18n.t("discord_bot.command.command_list.desc")) { |event| exec_discord_command(event, :command_list) }
-    # minecraftで実行できるコマンドを追加
-    @discord_bot.command(:add_command, description: I18n.t("discord_bot.command.add_command.desc"), permission_level: 3) { |event| exec_discord_command(event, :add_command) }
-    @discord_bot.command(:ac, description: I18n.t("discord_bot.command.add_command.desc"), permission_level: 3) { |event| exec_discord_command(event, :add_command) }
-    # TODO: コマンドの権限レベルを変更
-    # TODO: コマンドの削除
-    # TODO: ユーザーの権限レベルを変更
+    load_command
 
     # 取得した内容をパースし、コマンドの実行もしくはminecraftに内容を送信する
     @discord_bot.message do |event|
@@ -47,6 +36,29 @@ class DiscordBot
   end
 
   private
+  # 作成したdiscord用実行コマンドの読み込み
+  def load_command
+    # glhf :)
+    @discord_bot.command(:hello_world, description: '動作確認用コマンド') { |event| event.send_message("HELLO WORLD. #{event.user.name}") }
+    # ユーザーの一覧表示
+    @discord_bot.command(:user_list, description: I18n.t("discord_bot.command.user_list.desc")) { |event| exec_discord_command(event, :user_list) }
+    # コマンドの一覧表示
+    @discord_bot.command(:command_list, description: I18n.t("discord_bot.command.command_list.desc")) { |event| exec_discord_command(event, :command_list) }
+    # minecraftで実行できるコマンドを追加
+    @discord_bot.command([:command_add, :c_add], description: I18n.t("discord_bot.command.command_add.desc"), permission_level: 3) do |event|
+      exec_discord_command(event, :command_add)
+    end
+    # コマンドの権限レベルを変更
+    @discord_bot.command([:command_chmod, :c_chmod], description: I18n.t("discord_bot.command.command_chmod.desc"), permission_level: 3) do |event|
+      exec_discord_command(event, :command_chmod)
+    end
+    # TODO: コマンドの削除
+    # ユーザーの権限レベルを変更
+    @discord_bot.command(:user_chmod, description: I18n.t("discord_bot.command.user_chmod.desc"), permission_level: 3) do |event|
+      exec_discord_command(event, :user_chmod)
+    end
+  end
+
   # コマンドがdiscordのコマンドであれば、trueを返す
   def discord_command?(message)
     discord_command = message.match(/^\/(?<command>\w+).*$/)
@@ -68,11 +80,15 @@ class DiscordBot
     when :command_list
       event.send_message('<コマンド名> - <権限レベル>')
       COMMANDS.list.each {|command| event.send_message("#{command[:name]} - #{command[:permission_level]}")}
-    when :add_command
-      add_command(event, command)
+    when :command_add
+      command_add(event, command)
+    when :command_chmod
+      command_chmod(command, event)
+    when :user_chmod
+      user_chmod(command, event)
     end
 
-    return nil
+    nil
   end
 
   # ユーザーの追加
@@ -86,22 +102,63 @@ class DiscordBot
   end
 
   # minecraftで実行できるコマンドの追加
-  def add_command(event, command)
-    regexp = /^\/add_command (?<command_name>.+) (?<permission_level>\d+)$/
+  def command_add(event, command)
+    regexp = /^\/\w+ (?<command_name>.+) (?<permission_level>\d+)$/
 
     result = command.match(regexp)
+
+    # コマンドの引数が正しい形式で渡されていなければ処理を終了する
+    return event.send_message(I18n.t("discord_bot.command.command_add.execution_error")) if result.blank?
+
     command_name = result[:command_name]
     permission_level = result[:permission_level]
 
-    # コマンドの引数が正しい形式で渡されていなければ処理を終了する
-    return event.send_message(I18n.t("discord_bot.command.execution_error.add_command")) if result.blank?
     # コマンドがすでにある場合は処理を終了する
-    return event.send_message(I18n.t("discord_bot.command.already_registed", command_name: command_name)) if COMMANDS.command?(command_name)
+    return event.send_message(I18n.t("discord_bot.command.command_add.already_registed", command_name: command_name)) if COMMANDS.command?(command_name)
 
     # TODO: コマンドを登録する
     COMMANDS.add(command_name, permission_level)
 
-    msg = I18n.t("discord_bot.command.success", command_name: command_name, permission_level: permission_level)
+    msg = I18n.t("discord_bot.command.command_add.success", command_name: command_name, permission_level: permission_level)
     event.send_message(msg)
+  end
+
+  # コマンドの実行権限をを変更する
+  def command_chmod(command, event)
+    regexp = /^\/\w+ (?<command_name>.+) (?<permission_level>\d+)$/
+    result = command.match(regexp)
+
+    # コマンドの引数が正しい形式で渡されていなければ処理を終了する
+    return event.send_message(I18n.t("discord_bot.command.command_chmod.execution_error")) if result.blank?
+
+    command_name = result[:command_name]
+    permission_level = result[:permission_level]
+
+    command = COMMANDS.chmod(command_name, permission_level)
+    if command.present?
+      event.send_message(I18n.t("discord_bot.command.command_chmod.success", command_name: command.command_name, permission_level: command.permission_level))
+    else
+      event.send_message(I18n.t("discord_bot.command.command_chmod.error"))
+    end
+  end
+
+  # ユーザーの権限をを変更する
+  def user_chmod(command, event)
+    regexp = /^\/\w+ (?<user_id>.+) (?<permission_level>\d+)$/
+    result = command.match(regexp)
+
+    # コマンドの引数が正しい形式で渡されていなければ処理を終了する
+    return event.send_message(I18n.t("discord_bot.command.user_chmod.execution_error")) if result.blank?
+
+    user_id = result[:user_id]
+    permission_level = result[:permission_level]
+
+    user = DISCORD_USERS.chmod(user_id, permission_level)
+    if user.present?
+      @discord_bot.set_user_permission(user_id, permission_level)
+      event.send_message(I18n.t("discord_bot.command.user_chmod.success", user_name: user.user_name, permission_level: user.permission_level))
+    else
+      event.send_message(I18n.t("discord_bot.command.user_chmod.error"))
+    end
   end
 end

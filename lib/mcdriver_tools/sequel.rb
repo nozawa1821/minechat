@@ -29,7 +29,13 @@ class DISCORD_USERS < Sequel::Model(:discord_users)
     self.find(discord_id: id)
   end
 
-  # TODO: ユーザーの権限を変更
+  # ユーザーの権限を変更
+  # @return [DISCORD_USERS] 権限変更されたユーザーのオブジェクト
+  # @return [nil] ユーザーが見つからない場合、ユーザーの権限が変更できない場合はnil
+  def self.chmod(user_id, permission_level)
+    target_user = self.find(discord_id: user_id)
+    target_user.update(permission_level: permission_level) if target_user.present?
+  end
 
   # userが既に登録済みかを確認
   # @return [bool] 登録済みの場合はtrueを返す
@@ -48,12 +54,18 @@ class COMMANDS < Sequel::Model(:commands)
     self.all.map { |record| {id: record[:id], name: record[:command_name], permission_level: record[:permission_level]} }
   end
 
-  # TODO: コマンドの追加
+  # コマンドの追加
   def self.add(command_name, permission_level)
     self.insert(command_name: command_name, permission_level: permission_level)
     self.find(command_name: command_name)
   end
-  # TODO: コマンドの権限を変更
+
+  # コマンドの権限を変更
+  def self.chmod(command_name, permission_level)
+    target_command = self.find(command_name: command_name)
+    target_command.update(permission_level: permission_level) if target_command.present?
+  end
+
   # TODO: コマンドの削除
 
   # コマンドが既に登録済みかを確認
