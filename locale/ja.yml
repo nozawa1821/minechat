@@ -91,6 +91,8 @@ ja:
         error: "コマンドの削除に失敗しました"
       user_list:
         desc: "minechatに登録されているユーザー一覧を表示します"
+      user_add:
+        success: "%{user_name}さん。祝、初コメント！minechatにユーザー登録したよ"
       user_chmod:
         desc: "ユーザーの権限を変更します\n使用方法：/user_chmod <user_id> <permission_level>\n※<user_id>はdiscordのユーザー情報から取得可能です"
         success: "権限が更新されました\n> %{user_name}\n> 権限レベル：%{permission_level}"
