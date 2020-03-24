@@ -3,15 +3,17 @@ class MCDriver
   PORT = Config::MINECRAFT[:rcon_port]
   PASSWORD = Config::MINECRAFT[:rcon_password]
   PREFIX = Config::MINECRAFT[:command_prefix]
-  COMMAND_LIST = YAML.load_file('config/command_list.yml')
-  attr_reader :user, :message
+  attr_reader :user, :message, :error_message
 
-  def initialize
+  def initialize(discord_event)
     @authorized = false
     @transfer = CommandTransfer.new(HOST, PORT)
+    @discord_event = discord_event
+    @user_id = discord_event.user.id
   end
 
   # 内容をminecraftのチャットに送信する処理
+  # return [boolean]
   def send(user, message)
     @user = user
     @message = message
@@ -31,8 +33,8 @@ class MCDriver
     # 返却値がnilならば、falseを返す
     return false if response.nil?
 
-    # レスポンス内容をコンソール上に表示する（TODO: いつかログ出力する）
-    puts "minecaftサーバーからのレスポンス：#{response}" if response
+    # レスポンス内容をdiscordに表示する
+    @discord_event.send_message "minecaftサーバーからのレスポンス：\n> #{response}" if response.present?
 
     return true
   rescue => e
@@ -86,9 +88,25 @@ class MCDriver
     # 内容がコマンド形式になっていなければtrueを返す
     return true unless !!match_data
 
-    # 実行可能コマンドリストにコマンドがあればtrueを返す
-    p match_data[1]
-    COMMAND_LIST.any?(match_data[1])
+    # コマンドがリストに無い場合はfalseを返す
+    command = COMMANDS.find(command_name: match_data[1])
+    if command.blank?
+      @error_message = "以下のコマンドは実行できません\n> /#{match_data[1]}"
+      return false
+    end
+
+    # ユーザーの権限がコマンドの実行権限より高い場合はtrueを返す
+    user_permission_lv = DISCORD_USERS.find(discord_id: @user_id).permission_level
+    command_permission_lv = command.permission_level
+    unless user_permission_lv >= command_permission_lv
+      @error_message = "実行権限がありません\n
+        > あなたの権限レベル：#{user_permission_lv}\n
+        > コマンドの実行権限レベル：#{command_permission_lv}
+      "
+      return false
+    end
+
+    true
   end
 
   # 日本語文字をローマ字に変換する処理

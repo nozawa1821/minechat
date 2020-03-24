@@ -63,3 +63,36 @@ ja:
     withered_away: "%{user} が干からびて逝った"
     pummeled_by_player: "%{user} が %{by} にぺしゃんこにされて逝った"
     died: "%{user} が逝った"
+  discord_bot:
+    command:
+      minechat:
+        title: 'minechat'
+        url: 'https://github.com/nozawa1821/minechat'
+        desc: "discordで実行できるコマンドについては'/help'を参照してね\nわからないことがあればTwitterでDMしてね"
+        author: 'noziming'
+        twitter_url: 'https://twitter.com/noziming'
+        twitter_icon: 'https://pbs.twimg.com/profile_images/1199865213853454336/kKiW7Fte.jpg'
+      command_list:
+        desc: "discord上で実行できるminecraftのコマンドの一覧を表示します"
+      command_add:
+        desc: "discord上で実行できるminecraftのコマンドを追加します\n使用方法：/command_add <command_name> <permission_level>\n※権限レベルが0の場合は誰でも実行することができます。"
+        success: "コマンド：'/%{command_name}' を追加しました(権限レベル : %{permission_level})"
+        already_registed: "コマンド：'/%{command_name}' は既に登録済みです"
+        execution_error: "optionを正しく入力してください\n/command_add <command_name> <permission_level>"
+      command_chmod:
+        desc: "コマンドの実行権限を変更します\n使用方法：/command_chmod <command_name> <permission_level>"
+        success: "権限が更新されました\n> /%{command_name}\n> 権限レベル：%{permission_level}"
+        execution_error: "optionを正しく入力してください\n/command_chmod <command_name> <permission_level>"
+        error: "権限変更に失敗しました"
+      command_remove:
+        desc: "コマンドを削除します\n使用方法：/command_remove <command_name>"
+        success: "コマンドが削除されました"
+        execution_error: "optionを正しく入力してください\n/command_remove <command_name>"
+        error: "コマンドの削除に失敗しました"
+      user_list:
+        desc: "minechatに登録されているユーザー一覧を表示します"
+      user_chmod:
+        desc: "ユーザーの権限を変更します\n使用方法：/user_chmod <user_id> <permission_level>\n※<user_id>はdiscordのユーザー情報から取得可能です"
+        success: "権限が更新されました\n> %{user_name}\n> 権限レベル：%{permission_level}"
+        execution_error: "optionを正しく入力してください\n/user_chmod <user_id> <permission_level>"
+        error: "権限変更に失敗しました"
