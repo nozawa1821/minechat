@@ -4,15 +4,16 @@ Minecraftとdiscordのチャット欄を連携するツールを作成したよ
 ## Installation
 ### 環境構築
 
-minechatを稼働させるためにRubyとgitをインストールしていきます  
+minechatを稼働させるためにRubyとgitをインストールします  
 ※環境構築済みの方は飛ばしてください（rubyとbundlerのバージョンだけ気をつけてください）
 
+#### 事前注意
 実行環境はLinuxのCentOS 6です  
-環境によってコマンドが異なりますのであらかじめ確認してから環境構築を進めてください  
+環境によって入力するコマンドが異なりますのであらかじめ確認してから環境構築を進めてください  
 
 また、Minecraft serverと同様のserverにプログラムを稼働させる想定で話を進めています  
 
-・centOSのバージョンを確認します
+・centOSのバージョン確認方法
 ```
 $ cat /etc/redhat-release
 CentOS release 6.10 (Final)
@@ -104,21 +105,20 @@ $ gem -v
 ・インストール  
 ※`minechat`では`Gemfile.lock`で`bundler`のバージョンが固定されているので下記のバージョンに合わせてください
 ```
-$ gem install bundler -v '1.16.2'
+$ gem install bundler -v '2.1.4'
 ```
 ・`bundler`が読み込まれているかを確認
 ```
 $ bundle -v
-Bundler version 1.16.2
+Bundler version 2.1.4
 ```
 
   
-これで環境構築は完了です。お疲れ様でした。
-  
+これで環境構築は完了です。お疲れ様でした。  
 
 ### minechatのインストール
 ・任意のディレクトリにminechatをダウンロード  
-※自分は`Minecraft server`と同じ階層に配置しています。(`/opt/`配下)
+※私は`Minecraft server`と同じ階層(`/opt/`配下)に配置しています。
 
 ```
 $ cd <minechatを配置するディレクトリ>
@@ -206,6 +206,7 @@ vi config/config.rb
 ```
 $ ruby minechat.rb
 ```
+エラーがでなければ問題なし  
 
 ・minechatをバックグラウンドで起動します
 ```
@@ -220,7 +221,79 @@ root  xxxxx  x.x  x.x xxxxxx xxx xxx/x R+ xx:xx x:xx minechat.rb
 ```
 
 ## How to
-あとで書く
+### チャット
+discordの登録したチャンネルからメッセージを送ると  
+minecraftのチャット欄にメッセージが表示されます  
+逆も然りで、minecraftでやりとりしたメッセージは全てdiscordに送信されます  
+
+### discordコマンド
+discordからminecraft内で使用できるコマンドを制御することができます
+#### コマンド一覧
+##### command_list（c_list）
+discordから実行できるminecraftのコマンド一覧を表示します。
+例）
+```
+/command_list
+```
+##### command_add（c_add）
+> 権限レベル : 3  
+discordから実行できるminecraftのコマンドを追加します  
+
+```
+/command_add <追加したいコマンド> <権限レベル>  
+```
+例）
+```
+/command_add tp 3
+```
+##### command_chmod（c_chmod）
+> 権限レベル : 3  
+minecraftコマンドの実行権限を変更します  
+ユーザーの実行権限レベルは`/user_list`で確認してください  
+
+```
+/command_chmod <コマンド名> <権限レベル>  
+```
+例）
+```
+/command_chmod tp 4
+```
+##### command_remove（c_rm）
+> 権限レベル : 3  
+minechatに登録されているminecraftコマンドを削除します  
+
+```
+/command_remove <コマンド名>  
+```
+例）
+```
+/command_remove tp
+```
+##### user_list（u_list）
+minechatに登録されているユーザーリストを表示します  
+ちなみにユーザー登録はminechatと連携しているdiscordチャンネルに  
+メッセージを送った時点で登録されます  
+
+例）
+```
+/user_list
+```
+
+##### user_chmod（u_chmod）
+> 権限レベル : 4  
+ユーザーのコマンド実行権限を変更します  
+ユーザーの実行権限レベルは`/user_list`で確認してください  
+
+ユーザーの権限レベルはminecraftコマンド、discordコマンドの実行権限両方に適用されます  
+
+※discordユーザーIDはdiscordのユーザー情報から取得できます  
+```
+/user_chmod <discordユーザーID> <権限レベル>
+```
+例）
+```
+/user_chmod 11112222333344445 3
+```
 
 ## Author
 [noziming](https://noziming.work)

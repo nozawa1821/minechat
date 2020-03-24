@@ -88,7 +88,7 @@ class DiscordBot
     end
 
     # ユーザーの権限レベルを変更
-    @discord_bot.command([:user_chmod, :u_chmod], description: I18n.t("discord_bot.command.user_chmod.desc"), permission_level: 3) do |event|
+    @discord_bot.command([:user_chmod, :u_chmod], description: I18n.t("discord_bot.command.user_chmod.desc"), permission_level: 4) do |event|
       exec_discord_command(event, :user_chmod)
     end
   end
