@@ -19,11 +19,11 @@ class DiscordBot
       message = event.message.content # 発言内容
       # event.message.timestamp # 発言時間
 
+      # ユーザー情報の取得。なければユーザーを登録
+      user = DISCORD_USERS.registed?(user_id) ? DISCORD_USERS.find(discord_id: user_id) : user_add(user_id, user_name, event)
+
       # コマンドがdiscordのコマンドであれば処理をスキップ
       next if discord_command?(message)
-
-      # ユーザー情報の取得。なければユーザーを登録
-      user = DISCORD_USERS.registed?(user_id) ? DISCORD_USERS.find(discord_id: user_id) : add_user(user_id, user_name, event)
 
       # 発言内容をminecraft serverに送信する
       mc_driver = MCDriver.new(event)
@@ -98,8 +98,8 @@ class DiscordBot
     user_name = event.user.name # 発言者
     command = event.message.content # メッセージ
 
-    # TODO: userの権限レベルを取得
-    user = DISCORD_USERS.registed?(user_id) ? DISCORD_USERS.find(discord_id: user_id) : add_user(user_id, user_name, event)
+    # ユーザを取得
+    user = DISCORD_USERS.registed?(user_id) ? DISCORD_USERS.find(discord_id: user_id) : user_add(user_id, user_name, event)
 
     case discord_command
     when :user_list
@@ -134,13 +134,13 @@ class DiscordBot
   end
 
   # ユーザーの追加
-  def add_user(user_id, user_name, event)
+  def user_add(user_id, user_name, event)
     # ユーザーがサーバー管理者の場合、権限レベルの最大値を付与する
     @discord_bot.set_user_permission(user_id, 4) if event.user.owner?
     # minechat内にも保存
     DISCORD_USERS.add_user(user_id, user_name, event.user.owner?)
 
-    event.send_message("#{user_name}さん、祝初コメント！minechatにユーザー登録したよ")
+    event.send_message(I18n.t("discord_bot.command.user_add.success", user_name: user_name))
   end
 
   # minecraftで実行できるコマンドの追加
