@@ -40,22 +40,32 @@ class DiscordBot
   def load_command
     # glhf :)
     @discord_bot.command(:hello_world, description: '動作確認用コマンド') { |event| event.send_message("HELLO WORLD. #{event.user.name}") }
+
     # ユーザーの一覧表示
-    @discord_bot.command([:user_list, :u_list], description: I18n.t("discord_bot.command.user_list.desc")) { |event| exec_discord_command(event, :user_list) }
+    @discord_bot.command([:user_list, :u_list], description: I18n.t("discord_bot.command.user_list.desc")) do |event|
+      exec_discord_command(event, :user_list)
+    end
+
     # コマンドの一覧表示
-    @discord_bot.command([:command_list, :c_list], description: I18n.t("discord_bot.command.command_list.desc")) { |event| exec_discord_command(event, :command_list) }
+    @discord_bot.command([:command_list, :c_list], description: I18n.t("discord_bot.command.command_list.desc")) do |event|
+      exec_discord_command(event, :command_list)
+    end
+
     # minecraftで実行できるコマンドを追加
     @discord_bot.command([:command_add, :c_add], description: I18n.t("discord_bot.command.command_add.desc"), permission_level: 3) do |event|
       exec_discord_command(event, :command_add)
     end
+
     # コマンドの権限レベルを変更
     @discord_bot.command([:command_chmod, :c_chmod], description: I18n.t("discord_bot.command.command_chmod.desc"), permission_level: 3) do |event|
       exec_discord_command(event, :command_chmod)
     end
+
     # コマンドの削除
     @discord_bot.command([:command_remove, :c_rm], description: I18n.t("discord_bot.command.command_remove.desc"), permission_level: 3) do |event|
       exec_discord_command(event, :command_remove)
     end
+
     # ユーザーの権限レベルを変更
     @discord_bot.command([:user_chmod, :u_chmod], description: I18n.t("discord_bot.command.user_chmod.desc"), permission_level: 3) do |event|
       exec_discord_command(event, :user_chmod)
@@ -78,11 +88,9 @@ class DiscordBot
 
     case discord_command
     when :user_list
-      event.send_message('<ユーザー名> - <権限レベル>')
-      DISCORD_USERS.list.each {|user_record| event.send_message("#{user_record[:name]} - #{user_record[:permission_level]}")}
+      create_permission_list(event, 'user list', DISCORD_USERS.list)
     when :command_list
-      event.send_message('<コマンド名> - <権限レベル>')
-      COMMANDS.list.each {|command| event.send_message("#{command[:name]} - #{command[:permission_level]}")}
+      create_permission_list(event, 'command list', COMMANDS.list)
     when :command_add
       command_add(event, command)
     when :command_chmod
@@ -94,6 +102,20 @@ class DiscordBot
     end
 
     nil
+  end
+
+  def create_permission_list(event, title, list)
+    event.channel.send_embed do |embed|
+      embed.title = title
+      embed.color = '0x5db65b'
+      list.map do |command|
+        embed.add_field(
+          name: command[:name],
+          value: "権限レベル：#{command[:permission_level]}",
+          inline: false
+        )
+      end
+    end
   end
 
   # ユーザーの追加
