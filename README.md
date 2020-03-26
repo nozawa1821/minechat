@@ -4,7 +4,7 @@ Minecraftとdiscordのチャット欄を連携するツールを作成したよ
 ## Installation
 ### 環境構築
 
-minechatを稼働させるためにRubyとgitをインストールします  
+minechatを稼働させるために`Ruby`と`git`、`sqlite3`をインストールします  
 ※環境構築済みの方は飛ばしてください（rubyとbundlerのバージョンだけ気をつけてください）
 
 #### 事前注意
@@ -22,6 +22,11 @@ CentOS release 6.10 (Final)
 #### gitのインストール
 ```
 $ sudo yum install git
+```
+
+#### sqlite3のインストール
+```
+$ sudo yum install -y sqlite sqlite-devel
 ```
 
 #### rubyのインストール
@@ -210,7 +215,7 @@ $ ruby minechat.rb
 
 ・minechatをバックグラウンドで起動します
 ```
-$ nohup ruby main.rb &
+$ nohup ruby minechat.rb &
 ```
 
 ・minechatが稼働しているかを確認する
