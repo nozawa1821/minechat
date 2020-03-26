@@ -19,6 +19,11 @@ class DiscordBot
       message = event.message.content # 発言内容
       # event.message.timestamp # 発言時間
 
+      # 指定のチャンネル以外の発言を無視する
+      next unless target_channel?(event.channel.id)
+      # botの発言を無視する
+      next if event.author.bot_account?
+
       # ユーザー情報の取得。なければユーザーを登録
       user = DISCORD_USERS.registed?(user_id) ? DISCORD_USERS.find(discord_id: user_id) : user_add(user_id, user_name, event)
 
@@ -39,6 +44,11 @@ class DiscordBot
   end
 
   private
+  # @param [Integer] channel_id
+  def target_channel?(channel_id)
+    Config::DISCORD_BOT[:channel_id].to_i == channel_id
+  end
+
   # コマンドがdiscordのコマンドであれば、trueを返す
   def discord_command?(message)
     discord_command = message.match(/^\/(?<command>\w+).*$/)
@@ -97,6 +107,9 @@ class DiscordBot
     user_id = event.user.id # ユーザーID
     user_name = event.user.name # 発言者
     command = event.message.content # メッセージ
+
+    # 指定のチャンネル以外の発言を無視する
+    return unless target_channel?(event.channel.id)
 
     # ユーザを取得
     user = DISCORD_USERS.registed?(user_id) ? DISCORD_USERS.find(discord_id: user_id) : user_add(user_id, user_name, event)
