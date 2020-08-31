@@ -3,13 +3,14 @@ class MCDriver
   PORT = Config::MINECRAFT[:rcon_port]
   PASSWORD = Config::MINECRAFT[:rcon_password]
   PREFIX = Config::MINECRAFT[:command_prefix]
-  attr_reader :user, :message, :error_message
+  attr_reader :user, :message, :error_message, :response
 
   def initialize(discord_event)
     @authorized = false
     @transfer = CommandTransfer.new(HOST, PORT)
     @discord_event = discord_event
     @user_id = discord_event.user.id
+    @response = ''
   end
 
   # 内容をminecraftのチャットに送信する処理
@@ -28,13 +29,31 @@ class MCDriver
     return false unless convert_message
 
     # minecraft serverにコマンドを送信する
-    response = @transfer.send("#{PREFIX}#{@message}")
+    @response = @transfer.send("#{PREFIX}#{@message}")
 
     # 返却値がnilならば、falseを返す
-    return false if response.nil?
+    return false if @response.nil?
 
     # レスポンス内容をdiscordに表示する
-    @discord_event.send_message "minecaftサーバーからのレスポンス：\n> #{response}" if response.present?
+    @discord_event.send_message "minecaftサーバーからのレスポンス：\n> #{@response}" if @response.present?
+
+    return true
+  rescue => e
+    raise e
+  end
+
+  # 内容をminecraftのチャットにそのまま送信する処理
+  # return [boolean]
+  def direct_send(message)
+
+    # 認証
+    return false unless authorize
+
+    # minecraft serverにコマンドを送信する
+    @response = @transfer.send(message)
+
+    # 返却値がnilならば、falseを返す
+    return false if @response.nil?
 
     return true
   rescue => e

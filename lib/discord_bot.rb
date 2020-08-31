@@ -86,6 +86,11 @@ class DiscordBot
       exec_discord_command(event, :command_list)
     end
 
+    # ログイン中のユーザを一覧表示
+    @discord_bot.command([:login_player, :lp], description: I18n.t("discord_bot.command.login_player.desc")) do |event|
+      exec_discord_command(event, :login_players)
+    end
+
     # minecraftで実行できるコマンドを追加
     @discord_bot.command([:command_add, :c_add], description: I18n.t("discord_bot.command.command_add.desc"), permission_level: 3) do |event|
       exec_discord_command(event, :command_add)
@@ -123,6 +128,8 @@ class DiscordBot
       create_permission_list(event, 'user list', DISCORD_USERS.list)
     when :command_list
       create_permission_list(event, 'command list', COMMANDS.list)
+    when :login_players
+      show_login_players(event)
     when :command_add
       command_add(event, command)
     when :command_chmod
@@ -144,6 +151,37 @@ class DiscordBot
         embed.add_field(
           name: command[:name],
           value: "権限レベル：#{command[:permission_level]}",
+          inline: true
+        )
+      end
+    end
+  end
+
+  # ログインプレーヤー取得して一覧表示
+  def show_login_players(event)
+    list_command = '/list'
+    regexp = /^There are (?<count>\w.+) players online:(?<players>.*)$/
+
+    # /listコマンドを実行
+    mc_driver = MCDriver.new(event)
+    result = mc_driver.direct_send(list_command)
+
+    # 取得に失敗した場合、エラー内容を返す
+    return event.send_message(I18n.t("discord_bot.command.login_player.error")) if !result
+
+    # 取得した内容からログインしているplayerを抽出する
+    match_data = mc_driver.response.match(regexp)
+    # count = match_data[:count].gsub(' of a max ', '/')
+    players = match_data[:players].strip.split(', ')
+
+    return event.send_message('オンラインのプレーヤーはいません') if players.blank?
+
+    event.channel.send_embed do |embed|
+      embed.title = 'online players'
+      embed.color = '0x5db65b'
+      players.map do |player|
+        embed.add_field(
+          name: player,
           inline: true
         )
       end
