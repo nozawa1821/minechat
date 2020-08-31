@@ -1,6 +1,6 @@
 class Config
   # プログラムのバージョン
-  PROGRAM_VERSION = '1.1.0'
+  PROGRAM_VERSION = '1.1.2'
 
   # setting default language (:en or :ja)
   I18n.default_locale = :ja

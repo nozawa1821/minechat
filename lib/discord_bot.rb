@@ -1,4 +1,6 @@
 class DiscordBot
+  DISCORD_CHANNEL_ID = Config::DISCORD_BOT[:channel_id].to_i
+
   def initialize(bot)
     @discord_bot = bot
   end
@@ -46,10 +48,12 @@ class DiscordBot
   private
   # @param [Integer] channel_id
   def target_channel?(channel_id)
-    Config::DISCORD_BOT[:channel_id].to_i == channel_id
+    DISCORD_CHANNEL_ID == channel_id
   end
 
-  # コマンドがdiscordのコマンドであれば、trueを返す
+  # discordのコマンドが判断する
+  # @param [String] message
+  # @return [Boolean] コマンドがdiscordのコマンドであれば、trueを返す
   def discord_command?(message)
     discord_command = message.match(/^\/(?<command>\w+).*$/)
     @discord_bot.commands.keys.any?(discord_command[:command].intern) if discord_command.present?
