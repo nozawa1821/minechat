@@ -1,6 +1,6 @@
 class LogRegexpList
   DEATH_REGEXP = {
-    role: "death",
+    role: 'death',
     shot_by_aroow: /^(?<user>.*) was shot by arrow$/,
     shot_by_player_using_tool: /^(?<user>.*) was shot by (?<by>.*) using (?<tool>.*)$/,
     shot_by_player: /^(?<user>.*) was shot by (?<by>.*)$/,
@@ -58,8 +58,9 @@ class LogRegexpList
   }
 
   SERVER_INFO_REGEXP = {
-    role: "server_info",
-    login: /^(?<user>.*)\[\/(?<ip_address>.*)\] logged in with entity id \d+ at \(\[(?<server>.*)\].*\)$/,
+    role: 'server_info',
+    login: /^(?<user>.*)\[\/(?<ip_address>.*)\] logged in with entity id \d+ at \((?<server>.*)\)$/,
+    # login: /^(?<user>.*) joined the game/,
     logout: /^(?<user>.*) left the game$/,
     add_whitelist: /^\[(?<by>.*): Added (?<user>.*) to the whitelist\]$/,
     remove_whitelist: /^\[(?<by>.*): Removed (?<user>.*) from the whitelist\]$/,
