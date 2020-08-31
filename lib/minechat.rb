@@ -14,7 +14,7 @@ class MineChat
   end
 
   def start
-    # minecraftのserverログを抽出する。
+    # minecraftのserverログを抽出する
     Thread.start { @mclog_monitor.monitoring }
 
     # discord botを起動する
