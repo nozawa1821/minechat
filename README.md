@@ -1,5 +1,5 @@
 # MINECHAT
-Minecraftとdiscordのチャット欄を連携するツールを作成したよ  
+Minecraftとdiscordのチャット欄を連携するツール  
 
 ## Installation
 ### 環境構築
@@ -9,9 +9,10 @@ minechatを稼働させるために`Ruby`と`git`、`sqlite3`をインストー�
 
 #### 事前注意
 実行環境はLinuxのCentOS 6です  
-環境によって入力するコマンドが異なりますのであらかじめ確認してから環境構築を進めてください  
+環境によって入力するコマンドが異なる可能性があります。
+あらかじめ確認してから環境構築をおこなってください  
 
-また、Minecraft serverと同様のserverにプログラムを稼働させる想定で話を進めています  
+また、本内容はMinecraft serverと同様のserverにプログラムを稼働させる想定で話を進めています  
 
 ・centOSのバージョン確認方法
 ```
@@ -123,7 +124,7 @@ Bundler version 2.1.4
 
 ### minechatのインストール
 ・任意のディレクトリにminechatをダウンロード  
-※私は`Minecraft server`と同じ階層(`/opt/`配下)に配置しています。
+※私の環境下では `/opt/`配下に配置しています。
 
 ```
 $ cd <minechatを配置するディレクトリ>
@@ -135,18 +136,18 @@ $ git clone https://github.com/nozawa1821/minechat.git
 $ cd ./minechat
 ```
 
-・`minechat`を動かすために必要なライブラリをインストール
+・各種ライブラリのインストール
 ```
 bundle install
 ```
 
 ## Settings
-`Minecraft server`と`discord`を連携させるために設定をしていきます。
+`Minecraft server`と`discord`を連携させるための設定をします。
 ### Minecraft serverの設定
-Minecraft serverと外部ツールとの連携を可能にする`rcon`と呼ばれる仕組みを利用するため
+Minecraft serverと外部ツールとの連携を可能にする`rcon`と呼ばれる仕組みを利用するため、
 `server.properties`の設定を変更します
 
-・Minecraft serverディレクトリに移動して`server.properties`というファイルをviで開きます
+・Minecraft Serverのディレクトリに移動して`server.properties`というファイルを開きます
 ```
 $ cd <Minecraft server>
 $ vi server.properties
@@ -234,7 +235,17 @@ minecraftのチャット欄にメッセージが表示されます
 ### discordコマンド
 discordからminecraft内で使用できるコマンドを制御することができます
 #### コマンド一覧
+##### login_player（lp）
+> 権限レベル : だれでも実行可能  
+現在、ログイン中のプレーヤーを表示します。
+例)
+```
+/login_player
+/lp
+```
+
 ##### command_list（c_list）
+> 権限レベル : だれでも実行可能  
 discordから実行できるminecraftのコマンド一覧を表示します。
 例）
 ```
@@ -275,6 +286,7 @@ minechatに登録されているminecraftコマンドを削除します
 /command_remove tp
 ```
 ##### user_list（u_list）
+> 権限レベル : だれでも実行可能  
 minechatに登録されているユーザーリストを表示します  
 ちなみにユーザー登録はminechatと連携しているdiscordチャンネルに  
 メッセージを送った時点で登録されます  
